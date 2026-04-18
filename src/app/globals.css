@@ -1,26 +1,108 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #fafafa;
+  --foreground: #09090b;
+  --surface: #f4f4f5;
+  
+  --syntax-blue: #0070f3;
+  --syntax-amber: #f5a623;
+  --syntax-magenta: #eb367f;
+  --syntax-green: #50e3c2;
+  --syntax-comment: #888888;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #09090b; 
+    --foreground: #f4f4f5;
+    --surface: #18181b;
+    
+    --syntax-blue: #60a5fa;
+    --syntax-amber: #fbbf24;
+    --syntax-magenta: #e879f9;
+    --syntax-green: #4ade80;
+    --syntax-comment: #71717a;
+  }
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-surface: var(--surface);
+  
+  --color-syntax-blue: var(--syntax-blue);
+  --color-syntax-amber: var(--syntax-amber);
+  --color-syntax-magenta: var(--syntax-magenta);
+  --color-syntax-green: var(--syntax-green);
+  --color-syntax-comment: var(--syntax-comment);
+
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  body {
+    cursor: none;
+  }
+  a, button {
+    cursor: none;
+  }
+}
+
+::selection {
+  background: var(--foreground);
+  color: var(--background);
+}
+
+/* Typography styles for Studio Namma inspiration */
+.text-giant {
+  font-size: clamp(3rem, 9vw, 9rem);
+  line-height: 0.9;
+  letter-spacing: -0.04em;
+  text-transform: uppercase;
+}
+
+.text-huge {
+  font-size: clamp(2.5rem, 6vw, 6rem);
+  line-height: 0.95;
+  letter-spacing: -0.03em;
+  text-transform: uppercase;
+}
+
+.reveal-wrapper {
+  overflow: hidden;
+  display: inline-flex;
+}
+
+/* GSAP core configs */
+.gsap-reveal {
+  opacity: 0;
+  visibility: hidden;
+}
+
+/* Lenis smooth scrolling config */
+html.lenis, html.lenis body {
+  height: auto;
+}
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+.lenis.lenis-scrolling iframe {
+  pointer-events: none;
 }
