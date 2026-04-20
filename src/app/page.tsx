@@ -43,8 +43,10 @@ export default function Home() {
             scrollTrigger: {
               trigger: horizontalSection,
               pin: true,
-              scrub: 1,
-              end: () => `+=${pinWrapWidth}`
+              // Drop scrub lag entirely on touch devices for tighter, lag-free UI
+              scrub: true,
+              // Heavily compress the vertical track length on mobile to prevent swipe fatigue
+              end: () => `+=${window.innerWidth < 768 ? pinWrapWidth * 0.6 : pinWrapWidth}`
             }
           });
         }
