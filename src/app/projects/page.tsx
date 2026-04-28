@@ -18,18 +18,25 @@ export default function ProjectsPage() {
 
       <div className="grid grid-cols-1 gap-12">
         {projects.map((project) => (
-          <Link 
+          <div 
             key={project.id} 
-            href={`/projects/${project.slug}`}
-            className="group flex flex-col md:flex-row gap-8 items-center bg-surface/20 border border-transparent hover:border-surface p-6 rounded-2xl transition-colors cursor-pointer"
+            className="group flex flex-col md:flex-row gap-8 items-center bg-surface/20 border border-transparent hover:border-surface p-6 rounded-2xl transition-colors"
             style={{ viewTransitionName: `project-${project.slug}` } as React.CSSProperties}
           >
-            <div className="w-full md:w-1/2 aspect-video bg-surface overflow-hidden rounded-xl relative border border-surface group-hover:border-accent/40 transition-colors"
+            <Link href={`/projects/${project.slug}`} className="w-full md:w-1/2 aspect-video bg-surface overflow-hidden rounded-xl relative border border-surface group-hover:border-accent/40 transition-colors block"
                  style={{ viewTransitionName: `image-${project.slug}` } as React.CSSProperties}>
-               <div className="w-full h-full flex items-center justify-center font-mono text-[var(--syntax-comment)] bg-surface-hover/50">
-                 Loading: {project.image}
-               </div>
-            </div>
+                 {project.image && project.image !== "" ? (
+                   <img 
+                     src={project.image} 
+                     alt={project.title} 
+                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" 
+                   />
+                 ) : (
+                   <div className="w-full h-full flex items-center justify-center font-mono text-[var(--syntax-comment)] bg-surface-hover/50">
+                     No Image
+                   </div>
+                 )}
+            </Link>
             <div className="w-full md:w-1/2 py-4">
               <div className="flex gap-2 mb-4 flex-wrap">
                 {project.techStack.map(tech => (
@@ -38,17 +45,33 @@ export default function ProjectsPage() {
                   </span>
                 ))}
               </div>
-              <h2 className="text-3xl font-bold mb-4 group-hover:text-accent transition-colors" 
-                  style={{ viewTransitionName: `title-${project.slug}` } as React.CSSProperties}>
-                {project.title}
-              </h2>
+              <Link href={`/projects/${project.slug}`} className="block">
+                <h2 className="text-3xl font-bold mb-4 group-hover:text-[var(--syntax-blue)] transition-colors inline-block" 
+                    style={{ viewTransitionName: `title-${project.slug}` } as React.CSSProperties}>
+                  {project.title}
+                </h2>
+              </Link>
               <p className="text-[var(--syntax-comment)] mb-6 text-lg">{project.shortDescription}</p>
-              <div className="font-mono text-sm text-accent flex items-center gap-2">
-                <span>View Case Study</span>
-                <span className="group-hover:translate-x-2 transition-transform">→</span>
+              <div className="flex items-center gap-6 mt-6">
+                <Link href={`/projects/${project.slug}`} className="font-mono text-sm text-[var(--syntax-blue)] flex items-center gap-2 group/link cursor-pointer">
+                  <span>View Case Study</span>
+                  <span className="group-hover/link:translate-x-2 transition-transform">→</span>
+                </Link>
+                <div className="h-4 w-px bg-surface-hover" />
+                <a 
+                  href={project.liveUrl} 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="font-mono text-sm text-[var(--syntax-comment)] hover:text-foreground flex items-center gap-2 group/external transition-colors"
+                >
+                  Launch App
+                  <svg className="w-3 h-3 group-hover/external:-translate-y-0.5 group-hover/external:translate-x-0.5 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                  </svg>
+                </a>
               </div>
             </div>
-          </Link>
+          </div>
         ))}
       </div>
     </div>

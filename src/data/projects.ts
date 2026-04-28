@@ -14,6 +14,19 @@ export type Project = {
 
 export const projects: Project[] = [
   {
+    id: "0",
+    slug: "speedometx",
+    title: "SPEEDOMETX ⚡",
+    shortDescription: "A brutally fast, high-precision edge network telemetry dashboard with fluid Framer Motion kinematics.",
+    techStack: ["Next.js", "TypeScript", "TailwindCSS", "Framer Motion"],
+    role: "Full-stack Engineer",
+    image: "/projects/speedometx.png",
+    githubUrl: "https://github.com/anmolmalhan/Speedometx",
+    liveUrl: "https://speedometx.vercel.app/",
+    featured: true,
+    content: "Engineered from the ground up to bypass standard browser telemetry bottlenecks, SPEEDOMETX utilizes a high-concurrency upload engine pooling multithreaded HTTP workers to saturate modern TCP stacks. Paired with a dark, immersive interface, it accurately logs latency jitter natively to edge nodes without yielding to micro-stutters—making it an aggressively premium network assessment tool."
+  },
+  {
     id: "1",
     slug: "motion-commerce",
     title: "Motion Commerce",

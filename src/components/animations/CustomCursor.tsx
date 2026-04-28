@@ -7,56 +7,54 @@ export default function CustomCursor() {
   const cursorRef = useRef<HTMLDivElement>(null);
   
   useEffect(() => {
-    // Only run on non-touch devices
+    if (typeof window === "undefined") return;
     if (window.matchMedia("(hover: none) and (pointer: coarse)").matches) return;
     
     const cursor = cursorRef.current;
     if (!cursor) return;
 
-    let mouseX = 0;
-    let mouseY = 0;
-    
-    // Smooth cursor follow
+    // Use GSAP to enforce strict centering independent of other transforms
+    gsap.set(cursor, { xPercent: -50, yPercent: -50 });
+
     const onMouseMove = (e: MouseEvent) => {
-      mouseX = e.clientX;
-      mouseY = e.clientY;
       gsap.to(cursor, {
-        x: mouseX,
-        y: mouseY,
-        duration: 0.1,
-        ease: "power2.out" // tight ease to feel responsive
+        x: e.clientX,
+        y: e.clientY,
+        duration: 0.15,
+        ease: "power2.out"
       });
     };
 
-    // Magnetic / Hover effects
-    const links = document.querySelectorAll('a, button');
-    
-    const onMouseEnterLink = () => {
-      gsap.to(cursor, { scale: 3, opacity: 0.2, duration: 0.3 });
+    const handleMouseOver = (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+      if (target.closest('a, button, [role="button"], .cursor-pointer')) {
+        gsap.to(cursor, { scale: 3, opacity: 0.3, duration: 0.3 });
+      }
     };
-    const onMouseLeaveLink = () => {
-      gsap.to(cursor, { scale: 1, opacity: 1, duration: 0.3 });
+
+    const handleMouseOut = (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+      // If leaving an interactive element, revert.
+      if (target.closest('a, button, [role="button"], .cursor-pointer')) {
+        gsap.to(cursor, { scale: 1, opacity: 1, duration: 0.3 });
+      }
     };
 
     window.addEventListener("mousemove", onMouseMove);
-    links.forEach(link => {
-      link.addEventListener("mouseenter", onMouseEnterLink);
-      link.addEventListener("mouseleave", onMouseLeaveLink);
-    });
+    document.addEventListener("mouseover", handleMouseOver);
+    document.addEventListener("mouseout", handleMouseOut);
 
     return () => {
       window.removeEventListener("mousemove", onMouseMove);
-      links.forEach(link => {
-        link.removeEventListener("mouseenter", onMouseEnterLink);
-        link.removeEventListener("mouseleave", onMouseLeaveLink);
-      });
+      document.removeEventListener("mouseover", handleMouseOver);
+      document.removeEventListener("mouseout", handleMouseOut);
     };
   }, []);
 
   return (
     <div 
       ref={cursorRef} 
-      className="fixed top-0 left-0 w-4 h-4 bg-foreground rounded-full pointer-events-none z-[100] -translate-x-1/2 -translate-y-1/2 hidden md:block mix-blend-difference"
+      className="fixed top-0 left-0 w-4 h-4 rounded-full pointer-events-none z-[9999] hidden md:block mix-blend-difference"
       style={{ backgroundColor: "white" }} 
     />
   );
