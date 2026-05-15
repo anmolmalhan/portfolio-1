@@ -11,11 +11,12 @@ gsap.registerPlugin(ScrollTrigger);
 
 export default function Home() {
   const containerRef = useRef<HTMLDivElement>(null);
-  const horizontalRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     if (prefersReducedMotion) return;
+
+    let refreshTimer: ReturnType<typeof setTimeout> | null = null;
 
     const ctx = gsap.context(() => {
       // 1. Hero Text Reveal
@@ -45,27 +46,32 @@ export default function Home() {
         ease: "power3.out"
       });
 
-      // 4. Giant Footer Parallax
+      // 4. Giant Footer Parallax — numeric scrub (1s smoothing buffer) feels
+      // smoother than `true` because it interpolates between scroll ticks
+      // instead of snapping to each one. Critical on mobile.
       gsap.from(".footer-giant-text", {
         scrollTrigger: {
           trigger: "footer",
           start: "top bottom",
           end: "bottom bottom",
-          scrub: true,
+          scrub: 1,
           invalidateOnRefresh: true,
         },
         y: -100,
         opacity: 0.5,
+        force3D: true,
       });
 
       // Recalculate robustly after DOM and external resources settle
-      setTimeout(() => {
+      refreshTimer = setTimeout(() => {
         ScrollTrigger.refresh();
       }, 500);
-
     }, containerRef);
 
-    return () => ctx.revert();
+    return () => {
+      if (refreshTimer) clearTimeout(refreshTimer);
+      ctx.revert();
+    };
   }, []);
 
   return (
@@ -74,14 +80,26 @@ export default function Home() {
       {/* --- CONTENT CURTAIN --- */}
       <main className="relative z-10 w-full bg-background flex flex-col rounded-b-[2rem] md:rounded-b-[4rem] shadow-[0_30px_60px_rgba(0,0,0,0.15)] overflow-hidden text-foreground">
         
-        {/* --- HERO SECTION --- */}
-        <section className="h-screen w-full flex flex-col justify-end pb-12 px-6 md:px-12 relative overflow-hidden">
-          {/* Abstract code/terminal background glow */}
-          <div className="absolute top-1/4 right-[10%] w-[40vw] h-[40vw] bg-[var(--syntax-blue)] rounded-full blur-[150px] opacity-10 pointer-events-none" />
-          <div className="absolute bottom-0 left-[10%] w-[30vw] h-[30vw] bg-[var(--syntax-magenta)] rounded-full blur-[150px] opacity-10 pointer-events-none" />
+        {/* --- HERO SECTION ---
+            Mobile uses a shorter hero (75dvh) so the bottom-aligned content
+            doesn't leave a huge dead gap at the top of the page. Desktop
+            keeps the full-viewport hero. */}
+        <section className="h-[75dvh] md:h-[100dvh] w-full flex flex-col justify-end pb-10 md:pb-12 px-6 md:px-12 relative overflow-hidden hero-section">
+          {/* Abstract code/terminal background glow.
+              Heavy blur radii (>80px) and large blur surfaces cripple scroll FPS
+              because the compositor re-rasterizes the blur on every frame the
+              section is in view. We use a moderate blur radius and promote each
+              circle to its own GPU layer (translateZ + will-change) so it
+              composites instead of repainting during scroll. */}
+          <div
+            className="absolute top-1/4 right-[10%] w-[40vw] h-[40vw] bg-[var(--syntax-blue)] rounded-full blur-[40px] md:blur-[80px] opacity-10 pointer-events-none hero-glow"
+          />
+          <div
+            className="absolute bottom-0 left-[10%] w-[30vw] h-[30vw] bg-[var(--syntax-magenta)] rounded-full blur-[40px] md:blur-[80px] opacity-10 pointer-events-none hero-glow"
+          />
           
-          <div className="z-10 w-full pt-32">
-            <div className="flex justify-between items-end mb-8 md:mb-16 border-b border-foreground/20 pb-6 w-full">
+          <div className="z-10 w-full pt-20 md:pt-32">
+            <div className="flex justify-between items-end mb-6 md:mb-16 border-b border-foreground/20 pb-6 w-full">
               <div className="font-mono text-xs md:text-sm uppercase tracking-widest flex items-center gap-2">
                 <span className="w-2 h-2 bg-[var(--syntax-green)] rounded-full animate-pulse" />
                 Execution Layer
@@ -103,7 +121,7 @@ export default function Home() {
         </section>
 
         {/* --- PHILOSOPHY / CODE SECTION --- */}
-        <section className="min-h-screen w-full flex flex-col md:flex-row items-center border-t border-foreground/10 code-section">
+        <section className="min-h-[100dvh] w-full flex flex-col md:flex-row items-center border-t border-foreground/10 code-section">
           <div className="w-full md:w-1/2 p-12 md:p-24 bg-surface h-full flex flex-col justify-center">
             <ArrowDownRight className="w-16 h-16 mb-12 text-foreground" />
             <h2 className="text-4xl md:text-6xl font-bold mb-8 uppercase tracking-tighter leading-none">
@@ -124,9 +142,9 @@ export default function Home() {
         </section>
 
         {/* --- SELECTED WORKS (HORIZONTAL CAROUSEL) --- */}
-        <section className="h-screen w-full bg-foreground text-background flex items-center relative">
+        <section className="h-[100dvh] w-full bg-foreground text-background flex items-center relative">
           <style dangerouslySetInnerHTML={{__html: `\n.pin-wrap::-webkit-scrollbar { display: none; }\n`}} />
-          <div className="pin-wrap flex h-[80vh] items-center px-12 gap-16 md:gap-32 w-full overflow-x-auto snap-x snap-mandatory scroll-smooth" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+          <div data-lenis-prevent className="pin-wrap flex h-[80dvh] items-center px-6 md:px-12 gap-16 md:gap-32 w-full overflow-x-auto snap-x snap-mandatory scroll-smooth overscroll-x-contain" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
             
             <div className="w-[85vw] md:w-[60vw] shrink-0 snap-center">
               <div className="text-huge font-bold leading-none uppercase text-background">
@@ -189,13 +207,16 @@ export default function Home() {
         </section>
       </main>
 
-      {/* --- SPACER TO PUSH FOOTER REVEAL --- */}
-      <div className="h-screen w-full pointer-events-none trigger-footer bg-transparent" />
+      {/* --- SPACER THAT REVEALS THE FIXED FOOTER BELOW ---
+          The footer is fixed at z=-10. As <main> (z=10, bg-background) scrolls past,
+          this spacer leaves transparent room above the fixed footer so it "rises into view".
+          Uses 100dvh so iOS URL-bar resize doesn't cause layout jumps. */}
+      <div className="h-[100dvh] w-full pointer-events-none" aria-hidden />
 
       {/* --- MASSIVE FOOTER REVEAL --- */}
-      <footer className="fixed bottom-0 left-0 h-screen w-full flex flex-col justify-end bg-black text-white -z-10 pb-12 px-6 md:px-12 pointer-events-auto">
+      <footer className="fixed bottom-0 left-0 h-[100dvh] w-full flex flex-col justify-end bg-black text-white -z-10 pb-12 px-6 md:px-12 pointer-events-auto overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-t from-[var(--syntax-blue)]/5 to-transparent pointer-events-none" />
-        
+
         <div className="w-full relative z-10 footer-inner-parallax">
           <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-16 gap-8">
             <h2 className="text-huge font-bold leading-none tracking-tighter footer-giant-text">

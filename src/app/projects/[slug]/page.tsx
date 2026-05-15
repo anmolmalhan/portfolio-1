@@ -20,7 +20,7 @@ export default async function ProjectDetail({ params }: { params: Promise<{ slug
   return (
     <div className="w-full relative bg-background text-foreground page-reveal min-h-screen">
       {/* Decorative background glow */}
-      <div className="absolute top-0 right-0 w-[50vw] h-[50vw] bg-[var(--syntax-blue)] rounded-full blur-[200px] opacity-[0.03] pointer-events-none" />
+      <div className="absolute top-0 right-0 w-[50vw] h-[50vw] bg-[var(--syntax-blue)] rounded-full blur-[80px] md:blur-[200px] opacity-[0.03] pointer-events-none" />
 
       {/* Navigation Header */}
       <div className="max-w-7xl mx-auto px-6 md:px-12 pt-16 pb-8">
@@ -39,7 +39,7 @@ export default async function ProjectDetail({ params }: { params: Promise<{ slug
                 {project.role}
               </span>
               {project.techStack.map(tech => (
-                <span key={tech} className="text-xs font-mono px-4 py-1.5 rounded-full border border-surface text-[var(--syntax-green)] bg-surface/30 backdrop-blur-md">
+                <span key={tech} className="text-xs font-mono px-4 py-1.5 rounded-full border border-surface text-[var(--syntax-green)] bg-surface/30 md:backdrop-blur-md">
                   {tech}
                 </span>
               ))}

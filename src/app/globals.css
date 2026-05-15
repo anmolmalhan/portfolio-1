@@ -41,6 +41,11 @@
   --font-mono: var(--font-geist-mono);
 }
 
+html {
+  /* Native iOS/Android momentum + no JS-smooth-scroll fighting */
+  -webkit-text-size-adjust: 100%;
+}
+
 body {
   background: var(--background);
   color: var(--foreground);
@@ -48,6 +53,36 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow-x: hidden;
+  /* Stop iOS rubber-band that compounds with sticky/fixed sections to look like jitter */
+  overscroll-behavior-y: none;
+}
+
+/* Mobile: take animation pressure off layout — promote heavy transformed nodes
+   to their own layer and let the GPU compositor handle scroll painting. */
+@media (hover: none) and (pointer: coarse) {
+  .footer-giant-text,
+  .hero-line span {
+    will-change: transform;
+    transform: translateZ(0);
+    backface-visibility: hidden;
+  }
+}
+
+/* Promote large blurred glow elements to their own compositor layer so the
+   browser composites them instead of re-rasterizing the blur during scroll.
+   Without this, a 30–40vw blurred element causes severe scroll jank on the
+   hero section because every scroll frame invalidates the blur region. */
+.hero-glow {
+  transform: translateZ(0);
+  will-change: transform;
+  backface-visibility: hidden;
+  contain: paint;
+}
+
+/* Limit paint scope of the hero so its blur layers don't invalidate paints
+   in the rest of the document during scroll. */
+.hero-section {
+  contain: layout paint;
 }
 
 @media (hover: hover) and (pointer: fine) {

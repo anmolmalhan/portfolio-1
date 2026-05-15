@@ -2,6 +2,10 @@
 
 import React, { useEffect } from 'react';
 import Lenis from 'lenis';
+import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
+gsap.registerPlugin(ScrollTrigger);
 
 export default function SmoothScroll({ children }: { children: React.ReactNode }) {
   useEffect(() => {
@@ -9,22 +13,29 @@ export default function SmoothScroll({ children }: { children: React.ReactNode }
     if (prefersReducedMotion) return;
 
     const lenis = new Lenis({
-      duration: 1.2,
-      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), 
+      duration: 1.1,
+      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
       orientation: 'vertical',
       gestureOrientation: 'vertical',
       smoothWheel: true,
-      wheelMultiplier: 1,
-      touchMultiplier: 2,
+      // Touch: hand back to native iOS/Android momentum (smoother than syncTouch
+      // on real devices). ScrollTrigger animations stay smooth because we use
+      // numeric `scrub` values (which add their own interpolation buffer) and
+      // because Lenis still updates ScrollTrigger from GSAP's RAF ticker.
+      syncTouch: false,
     });
 
-    function raf(time: number) {
-      lenis.raf(time);
-      requestAnimationFrame(raf);
-    }
-    requestAnimationFrame(raf);
+    // Drive Lenis from GSAP's ticker so ScrollTrigger and Lenis share one
+    // requestAnimationFrame loop and can't drift.
+    const tickerCb = (time: number) => lenis.raf(time * 1000);
+    gsap.ticker.add(tickerCb);
+    gsap.ticker.lagSmoothing(0);
+
+    // Keep ScrollTrigger reading positions from Lenis's smoothed scroll.
+    lenis.on('scroll', ScrollTrigger.update);
 
     return () => {
+      gsap.ticker.remove(tickerCb);
       lenis.destroy();
     };
   }, []);
