@@ -8,6 +8,28 @@ test.describe("smoke", () => {
     await expect(page.getByText("CODE", { exact: true })).toBeVisible();
   });
 
+  test("hero text reveal lands at translate(0) — guards GSAP/CSS conflict", async ({ page }) => {
+    await page.goto("/");
+    // Hero tween is 0.2s delay + 1.4s duration + 0.3s worst-case stagger.
+    // Allow a generous tail for slower CI hardware before reading the final state.
+    await page.waitForTimeout(2500);
+    const matrices = await page.evaluate(() =>
+      Array.from(document.querySelectorAll<HTMLElement>(".hero-line span")).map(
+        (s) => getComputedStyle(s).transform
+      )
+    );
+    expect(matrices).toHaveLength(4);
+    // Final state should be identity-translate. We round to tolerate sub-px
+    // float dust from GSAP's tween precision.
+    for (const m of matrices) {
+      const match = m.match(/matrix\(1, 0, 0, 1, (-?[\d.e-]+), (-?[\d.e-]+)\)/);
+      expect(match, `expected identity-translate matrix, got: ${m}`).not.toBeNull();
+      const [tx, ty] = [Number(match![1]), Number(match![2])];
+      expect(Math.abs(tx)).toBeLessThan(0.5);
+      expect(Math.abs(ty)).toBeLessThan(0.5);
+    }
+  });
+
   test("projects listing links to a case study", async ({ page }) => {
     await page.goto("/projects");
     await expect(page.getByRole("heading", { name: "Projects", level: 1 })).toBeVisible();
@@ -30,6 +52,20 @@ test.describe("smoke", () => {
     await expect(page.getByLabel(/email/i)).toBeVisible();
     await expect(page.getByLabel(/message/i)).toBeVisible();
     await expect(page.getByRole("link", { name: /github/i }).first()).toBeVisible();
+  });
+
+  test("contact form submits and reaches the success terminal", async ({ page }) => {
+    await page.goto("/contact");
+    await page.getByLabel(/name/i).fill("Ada Lovelace");
+    await page.getByLabel(/email/i).fill("ada@example.com");
+    await page.getByLabel(/message/i).fill("Hello — interested in working together.");
+
+    // No RESEND_API_KEY in dev → server action returns mode: "mailto" → client
+    // flow appends logs and ends at the "Transmission Complete" success state.
+    // The mailto: handoff that follows is a no-op in headless Chromium.
+    await page.getByRole("button", { name: /await transmit/i }).click();
+    await expect(page.getByText(/Transmission Complete/i)).toBeVisible({ timeout: 5_000 });
+    await expect(page.getByRole("button", { name: /reset/i })).toBeVisible();
   });
 
   test("home footer contact CTA navigates to /contact", async ({ page }) => {
