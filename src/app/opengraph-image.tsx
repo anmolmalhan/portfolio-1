@@ -83,7 +83,7 @@ export default function OG() {
             <span>/</span>
             <span style={{ color: "#e879f9" }}>GSAP</span>
           </div>
-          <div style={{ color: "#f4f4f5" }}>anmolmalhan.dev</div>
+          <div style={{ color: "#f4f4f5" }}>anmolmalhan.com</div>
         </div>
       </div>
     ),

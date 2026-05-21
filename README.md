@@ -85,7 +85,7 @@ tests/
 
 ```bash
 # Required in production. Falls back to http://localhost:3000 if unset.
-NEXT_PUBLIC_SITE_URL=https://anmolmalhan.dev
+NEXT_PUBLIC_SITE_URL=https://anmolmalhan.com
 
 # Optional contact-form mail backend (Resend). When unset the form opens
 # the visitor's default mail client instead.
