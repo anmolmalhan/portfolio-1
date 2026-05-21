@@ -39,7 +39,7 @@ export function Header() {
         >
           <CodeXml className="w-6 h-6 md:w-8 md:h-8 transition-transform group-hover:scale-95 duration-500 ease-out" />
           <span className="font-sans font-bold text-lg md:text-xl tracking-tighter uppercase leading-none mt-1 hidden sm:block">
-            <span className="opacity-50">Dev/</span>Motion
+            <span className="opacity-50">Anmol</span> Malhan
           </span>
         </Link>
         <nav className="flex gap-4 md:gap-8 items-center" aria-label="Primary">

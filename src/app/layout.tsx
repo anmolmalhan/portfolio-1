@@ -17,12 +17,12 @@ const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: "Anmol Malhan — Dev/Motion Portfolio",
+    default: "Anmol Malhan — Frontend Portfolio",
     template: "%s · Anmol Malhan",
   },
   description:
     "Anmol Malhan — frontend developer building fast, animated web experiences with Next.js, React, TypeScript, and GSAP.",
-  applicationName: "Dev/Motion",
+  applicationName: "Anmol Malhan",
   authors: [{ name: "Anmol Malhan" }],
   creator: "Anmol Malhan",
   keywords: [
@@ -37,14 +37,14 @@ export const metadata: Metadata = {
   ],
   openGraph: {
     type: "website",
-    title: "Anmol Malhan — Dev/Motion Portfolio",
+    title: "Anmol Malhan — Frontend Portfolio",
     description:
       "Frontend developer building fast, animated web experiences with Next.js, React, and GSAP.",
-    siteName: "Dev/Motion",
+    siteName: "Anmol Malhan",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Anmol Malhan — Dev/Motion Portfolio",
+    title: "Anmol Malhan — Frontend Portfolio",
     description:
       "Frontend developer building fast, animated web experiences with Next.js, React, and GSAP.",
   },
@@ -70,7 +70,6 @@ const personJsonLd = {
   "@context": "https://schema.org",
   "@type": "Person",
   name: "Anmol Malhan",
-  alternateName: "Dev/Motion",
   jobTitle: "Frontend Developer",
   url: siteUrl,
   image: `${siteUrl}/profile.jpg`,

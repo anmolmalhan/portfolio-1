@@ -1,4 +1,4 @@
-# Dev/Motion — Anmol Malhan's Portfolio
+# Anmol Malhan — Frontend Portfolio
 
 Personal portfolio site. Built to feel fast, deliberate, and motion-aware while staying accessible.
 
