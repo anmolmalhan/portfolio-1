@@ -15,13 +15,13 @@ export default function ProjectsCarousel({ projects }: { projects: Project[] }) 
 
   return (
     <section
-      className="min-h-[100dvh] md:h-[100dvh] w-full bg-foreground text-background flex items-center relative py-20 md:py-0"
+      className="h-[100dvh] w-full bg-foreground text-background flex items-center relative"
       aria-label="Selected projects"
     >
       <div
         ref={wrapRef}
         data-lenis-prevent
-        className="pin-wrap flex flex-col md:flex-row h-auto md:h-[80dvh] md:items-center px-6 md:px-12 gap-16 md:gap-32 w-full md:overflow-x-auto md:snap-x md:snap-mandatory scroll-smooth md:overscroll-x-contain md:pr-[20vw]"
+        className="pin-wrap flex h-[80dvh] items-center px-6 md:px-12 gap-16 md:gap-32 w-full overflow-x-auto snap-x snap-mandatory scroll-smooth overscroll-x-contain pr-[20vw]"
         style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
         tabIndex={0}
         role="region"
@@ -33,7 +33,7 @@ export default function ProjectsCarousel({ projects }: { projects: Project[] }) 
           e.currentTarget.scrollBy({ left: dir * window.innerWidth * 0.7, behavior: "smooth" });
         }}
       >
-        <div className="w-full md:w-[60vw] shrink-0 snap-center">
+        <div className="w-[85vw] md:w-[60vw] shrink-0 snap-center">
           <div className="text-huge font-bold leading-none uppercase text-background">
             Selected<br />Projects
           </div>
@@ -53,7 +53,7 @@ export default function ProjectsCarousel({ projects }: { projects: Project[] }) 
         {projects.filter((p) => p.featured).map((project, i) => (
           <div
             key={project.id}
-            className="w-full md:w-[60vw] shrink-0 h-auto md:h-full flex flex-col justify-center group relative text-background snap-center"
+            className="w-[85vw] md:w-[60vw] shrink-0 h-full flex flex-col justify-center group relative text-background snap-center"
           >
             <div className="flex font-mono text-sm opacity-50 mb-6 gap-6">
               <span>{String(i + 1).padStart(2, "0")}</span>
@@ -71,7 +71,7 @@ export default function ProjectsCarousel({ projects }: { projects: Project[] }) 
                   src={project.image}
                   alt={project.title}
                   fill
-                  sizes="(max-width: 768px) 100vw, 60vw"
+                  sizes="(max-width: 768px) 85vw, 60vw"
                   className="object-cover opacity-80 group-hover:scale-105 group-hover:opacity-100 transition-all duration-1000 ease-out"
                 />
               ) : (
