@@ -95,10 +95,10 @@ export default function FooterReveal() {
             </p>
           </div>
           <a
-            href="mailto:malhananmol1@gmail.com"
+            href="mailto:contact@anmolmalhan.com"
             className="font-mono text-xs md:text-sm text-white/70 hover:text-white transition-colors break-all md:text-right block focus-visible:outline-none focus-visible:underline"
           >
-            malhananmol1<span className="opacity-50">@gmail.com</span>
+            contact<span className="opacity-50">@anmolmalhan.com</span>
           </a>
         </div>
 

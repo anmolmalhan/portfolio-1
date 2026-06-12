@@ -18,7 +18,7 @@ function LinkedinMark({ className }: { className?: string }) {
 import { StatusBanner } from "./StatusBanner";
 import { ContactForm } from "./ContactForm";
 
-const CONTACT_EMAIL = "malhananmol1@gmail.com";
+const CONTACT_EMAIL = "contact@anmolmalhan.com";
 
 // Server Component: reads searchParams on the server so the status banner
 // renders in the initial HTML. That means visitors without JS see the

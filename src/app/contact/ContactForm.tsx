@@ -4,7 +4,7 @@ import { useState, useTransition } from "react";
 import { Send, CheckCircle } from "lucide-react";
 import { sendContactMessage, sendContactForm } from "./actions";
 
-const CONTACT_EMAIL = "malhananmol1@gmail.com";
+const CONTACT_EMAIL = "contact@anmolmalhan.com";
 
 type Status = "idle" | "compiling" | "success" | "error";
 
