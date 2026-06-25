@@ -1,6 +1,16 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { GitHubCalendar } from "react-github-calendar";
+
+/** Resolve the active theme the same way globals.css does:
+ *  explicit data-theme wins, otherwise fall back to the system preference. */
+function getActiveScheme(): "light" | "dark" {
+  if (typeof document === "undefined") return "light";
+  const attr = document.documentElement.getAttribute("data-theme");
+  if (attr === "dark" || attr === "light") return attr;
+  return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+}
 
 function GithubMark({ className }: { className?: string }) {
   return (
@@ -15,11 +25,30 @@ interface GitHubActivityProps {
 }
 
 export default function GitHubActivity({ username }: GitHubActivityProps) {
-  // Use a monochromatic color scale based on the syntax green token, 
-  // or a blue accent token depending on preference.
-  // react-github-calendar accepts a `colorScheme` prop for dark/light mode,
-  // or `theme` to override exact colors.
-  
+  // The calendar must follow the site's active theme, otherwise the empty
+  // cells (near-black in the dark palette) clash with the light card. Track
+  // the resolved scheme reactively so toggling theme repaints the calendar.
+  const [scheme, setScheme] = useState<"light" | "dark">("light");
+
+  useEffect(() => {
+    setScheme(getActiveScheme());
+
+    const update = () => setScheme(getActiveScheme());
+    const observer = new MutationObserver(update);
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ["data-theme"],
+    });
+    const mq = window.matchMedia("(prefers-color-scheme: dark)");
+    mq.addEventListener("change", update);
+
+    return () => {
+      observer.disconnect();
+      mq.removeEventListener("change", update);
+    };
+  }, []);
+
+  // Canonical GitHub palettes: light gray → green on light, dark → green on dark.
   const explicitTheme = {
     light: ['#ebedf0', '#9be9a8', '#40c463', '#30a14e', '#216e39'],
     dark: ['#161b22', '#0e4429', '#006d32', '#26a641', '#39d353'],
@@ -35,9 +64,9 @@ export default function GitHubActivity({ username }: GitHubActivityProps) {
       <div className="bg-surface/30 border border-surface p-6 sm:p-8 rounded-xl overflow-hidden">
         <div className="overflow-x-auto pb-4 -mx-4 px-4 sm:mx-0 sm:px-0">
           <div className="min-w-[800px] flex justify-center">
-            <GitHubCalendar 
-              username={username} 
-              colorScheme="dark" // We can force dark mode colors or use 'light'/'dark'
+            <GitHubCalendar
+              username={username}
+              colorScheme={scheme}
               theme={explicitTheme}
               fontSize={14}
               blockSize={12}
