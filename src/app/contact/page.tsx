@@ -17,6 +17,8 @@ function LinkedinMark({ className }: { className?: string }) {
 }
 import { StatusBanner } from "./StatusBanner";
 import { ContactForm } from "./ContactForm";
+import { Reveal } from "@/components/ui/Reveal";
+import { SplitReveal } from "@/components/ui/SplitReveal";
 
 const CONTACT_EMAIL = "contact@anmolmalhan.com";
 
@@ -64,7 +66,7 @@ export default async function ContactPage({
         </div>
         <h1 className="text-4xl font-bold mb-4 flex items-center gap-3">
           <Terminal className="text-accent w-8 h-8" />
-          Contact Request
+          <SplitReveal text="Contact Request" />
         </h1>
         <p className="text-[var(--syntax-comment)] text-lg">
           Tell me what you&apos;re building, the rough shape of the timeline, and how
@@ -73,23 +75,24 @@ export default async function ContactPage({
       </div>
 
       <dl className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-10">
-        {meta.map(({ icon: Icon, label, value }) => (
-          <div
-            key={label}
-            className="border border-surface bg-surface/20 rounded-lg p-4"
-          >
-            <Icon className="w-4 h-4 text-[var(--syntax-blue)] mb-3" />
-            <dt className="font-mono text-[10px] uppercase tracking-widest text-[var(--syntax-comment)] mb-1">
-              {label}
-            </dt>
-            <dd className="text-sm font-medium text-foreground/90">{value}</dd>
-          </div>
+        {meta.map(({ icon: Icon, label, value }, i) => (
+          <Reveal key={label} delay={i * 80}>
+            <div className="h-full border border-surface bg-surface/20 rounded-lg p-4">
+              <Icon className="w-4 h-4 text-[var(--syntax-blue)] mb-3" />
+              <dt className="font-mono text-[10px] uppercase tracking-widest text-[var(--syntax-comment)] mb-1">
+                {label}
+              </dt>
+              <dd className="text-sm font-medium text-foreground/90">{value}</dd>
+            </div>
+          </Reveal>
         ))}
       </dl>
 
       <StatusBanner status={sp.status} mode={sp.mode} msg={sp.msg} />
 
-      <ContactForm />
+      <Reveal>
+        <ContactForm />
+      </Reveal>
 
       <section className="mt-16" aria-labelledby="good-fit-heading">
         <h2
@@ -100,8 +103,10 @@ export default async function ContactPage({
         </h2>
         <ul className="space-y-4">
           {goodFit.map((item, i) => (
-            <li
+            <Reveal
+              as="li"
               key={i}
+              delay={i * 80}
               className="flex gap-4 text-foreground/85 leading-relaxed"
             >
               <span
@@ -111,7 +116,7 @@ export default async function ContactPage({
                 {String(i + 1).padStart(2, "0")}
               </span>
               <span>{item}</span>
-            </li>
+            </Reveal>
           ))}
         </ul>
       </section>
@@ -124,31 +129,37 @@ export default async function ContactPage({
           {"// Or reach me elsewhere"}
         </h2>
         <div className="flex flex-wrap gap-3">
-          <a
-            href={`mailto:${CONTACT_EMAIL}`}
-            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-full border border-surface hover:border-foreground/40 transition-colors font-mono text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
-          >
-            <Mail className="w-4 h-4 text-[var(--syntax-blue)]" />
-            {CONTACT_EMAIL}
-          </a>
-          <a
-            href="https://github.com/anmolmalhan"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-full border border-surface hover:border-foreground/40 transition-colors font-mono text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
-          >
-            <GithubMark className="w-4 h-4" />
-            GitHub
-          </a>
-          <a
-            href="https://www.linkedin.com/in/anmolmalhan/"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-full border border-surface hover:border-foreground/40 transition-colors font-mono text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
-          >
-            <LinkedinMark className="w-4 h-4 text-[var(--syntax-blue)]" />
-            LinkedIn
-          </a>
+          <Reveal delay={0}>
+            <a
+              href={`mailto:${CONTACT_EMAIL}`}
+              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-full border border-surface hover:border-foreground/40 transition-colors font-mono text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+            >
+              <Mail className="w-4 h-4 text-[var(--syntax-blue)]" />
+              {CONTACT_EMAIL}
+            </a>
+          </Reveal>
+          <Reveal delay={70}>
+            <a
+              href="https://github.com/anmolmalhan"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-full border border-surface hover:border-foreground/40 transition-colors font-mono text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+            >
+              <GithubMark className="w-4 h-4" />
+              GitHub
+            </a>
+          </Reveal>
+          <Reveal delay={140}>
+            <a
+              href="https://www.linkedin.com/in/anmolmalhan/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-full border border-surface hover:border-foreground/40 transition-colors font-mono text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+            >
+              <LinkedinMark className="w-4 h-4 text-[var(--syntax-blue)]" />
+              LinkedIn
+            </a>
+          </Reveal>
         </div>
       </section>
     </div>

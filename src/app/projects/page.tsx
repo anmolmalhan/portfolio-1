@@ -3,6 +3,9 @@ import { projects } from "@/data/projects";
 import Link from "next/link";
 import Image from "next/image";
 import { FolderGit2 } from "lucide-react";
+import { Reveal } from "@/components/ui/Reveal";
+import { Tilt } from "@/components/ui/Tilt";
+import { SplitReveal } from "@/components/ui/SplitReveal";
 
 export const metadata: Metadata = {
   title: "Projects",
@@ -17,7 +20,7 @@ export default function ProjectsPage() {
       <div className="mb-12 border-b border-surface pb-6">
         <h1 className="text-4xl font-bold mb-4 flex items-center gap-3">
           <FolderGit2 className="text-accent w-8 h-8" />
-          Projects
+          <SplitReveal text="Projects" />
         </h1>
         <p className="text-[var(--syntax-comment)] max-w-2xl text-lg">
           A collection of interfaces and applications I&apos;ve built. Focusing on performance,
@@ -26,10 +29,10 @@ export default function ProjectsPage() {
       </div>
 
       <div className="grid grid-cols-1 gap-12">
-        {projects.map((project) => (
-          <div 
-            key={project.id} 
-            className="group flex flex-col md:flex-row gap-8 items-center bg-surface/20 border border-transparent hover:border-surface p-6 rounded-2xl transition-colors"
+        {projects.map((project, i) => (
+          <Reveal key={project.id} delay={i * 80}>
+          <Tilt
+            className="group flex flex-col md:flex-row gap-8 items-center bg-surface/20 border border-transparent hover:border-surface p-6 rounded-2xl [transition:box-shadow_300ms_ease-out,border-color_300ms_ease-out,background-color_300ms_ease-out,transform_300ms_ease-out] hover:shadow-xl hover:shadow-black/5"
             style={{ viewTransitionName: `project-${project.slug}` } as React.CSSProperties}
           >
             <Link href={`/projects/${project.slug}`} className="w-full md:w-1/2 aspect-video bg-surface overflow-hidden rounded-xl relative border border-surface group-hover:border-accent/40 transition-colors block"
@@ -86,7 +89,8 @@ export default function ProjectsPage() {
                 )}
               </div>
             </div>
-          </div>
+          </Tilt>
+          </Reveal>
         ))}
       </div>
     </div>

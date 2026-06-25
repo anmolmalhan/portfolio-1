@@ -3,6 +3,9 @@ import { User, MonitorPlay, BookOpen, Coffee, ArrowRight, MapPin } from "lucide-
 import Image from "next/image";
 import Link from "next/link";
 import GitHubActivity from "@/components/about/GitHubActivity";
+import { Reveal } from "@/components/ui/Reveal";
+import { Magnetic } from "@/components/ui/Magnetic";
+import { SplitReveal } from "@/components/ui/SplitReveal";
 
 export const metadata: Metadata = {
   title: "About",
@@ -39,12 +42,12 @@ export default function AboutPage() {
   return (
     <div className="max-w-5xl w-full mx-auto px-6 py-20 flex-1 page-reveal">
       <div className="mb-20 grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-12 items-start">
-        
+
         {/* Left Column: Text & Meta */}
-        <div>
+        <Reveal as="div">
           <h1 className="text-4xl font-bold mb-4 flex items-center gap-3">
             <User className="text-foreground w-8 h-8" />
-            About Me
+            <SplitReveal text="About Me" />
           </h1>
           <p className="text-xl font-medium text-foreground mb-6">
             I design clean interfaces and build them with production-ready code.
@@ -70,17 +73,21 @@ export default function AboutPage() {
           </div>
           
           <div className="flex flex-wrap gap-4">
-            <Link href="/projects" className="inline-flex items-center gap-2 bg-foreground text-background px-6 py-3 rounded-full text-sm font-bold hover:scale-105 transition-transform">
-              View Projects <ArrowRight className="w-4 h-4" />
-            </Link>
-            <Link href="/contact" className="inline-flex items-center gap-2 border border-surface px-6 py-3 rounded-full text-sm font-bold hover:bg-surface/50 transition-colors">
-              Let&apos;s Work Together
-            </Link>
+            <Magnetic>
+              <Link href="/projects" className="inline-flex items-center gap-2 bg-foreground text-background px-6 py-3 rounded-full text-sm font-bold hover:scale-105 transition-transform">
+                View Projects <ArrowRight className="w-4 h-4" />
+              </Link>
+            </Magnetic>
+            <Magnetic>
+              <Link href="/contact" className="inline-flex items-center gap-2 border border-surface px-6 py-3 rounded-full text-sm font-bold hover:bg-surface/50 transition-colors">
+                Let&apos;s Work Together
+              </Link>
+            </Magnetic>
           </div>
-        </div>
+        </Reveal>
 
         {/* Right Column: Photo */}
-        <div className="order-first lg:order-last w-full max-w-sm mx-auto lg:mx-0">
+        <Reveal as="div" delay={120} className="order-first lg:order-last w-full max-w-sm mx-auto lg:mx-0">
           <div className="relative aspect-[4/3] sm:aspect-[3/4] w-full border border-surface/50 rounded-2xl overflow-hidden shadow-2xl bg-surface/20 group">
             <div className="absolute inset-0 bg-black/10 group-hover:bg-transparent transition-colors z-10 pointer-events-none"></div>
             <Image
@@ -92,7 +99,7 @@ export default function AboutPage() {
               priority
             />
           </div>
-        </div>
+        </Reveal>
       </div>
 
       <div className="pt-8 border-t border-surface/30">
@@ -104,17 +111,21 @@ export default function AboutPage() {
           {blocks.map((block, i) => {
             const Icon = block.icon;
             return (
-              <div key={i} className={`bg-surface/30 border border-surface p-6 rounded-xl hover:bg-surface/50 transition-colors group ${block.className}`}>
-                <Icon className={`w-8 h-8 mb-4 ${block.color} group-hover:-translate-y-1 transition-transform`} />
-                <h3 className="text-xl font-bold mb-2 text-foreground/90">{block.title}</h3>
-                <p className="text-[var(--syntax-comment)] text-sm leading-relaxed">{block.desc}</p>
-              </div>
+              <Reveal key={i} delay={i * 90} className={block.className}>
+                <div className="h-full bg-surface/30 border border-surface p-6 rounded-xl hover:bg-surface/50 transition-[transform,box-shadow,background-color] duration-300 ease-out motion-safe:hover:-translate-y-1 hover:shadow-lg hover:shadow-black/5 group">
+                  <Icon className={`w-8 h-8 mb-4 ${block.color} group-hover:-translate-y-1 transition-transform`} />
+                  <h3 className="text-xl font-bold mb-2 text-foreground/90">{block.title}</h3>
+                  <p className="text-[var(--syntax-comment)] text-sm leading-relaxed">{block.desc}</p>
+                </div>
+              </Reveal>
             );
           })}
         </div>
       </div>
       
-      <GitHubActivity username="anmolmalhan" />
+      <Reveal>
+        <GitHubActivity username="anmolmalhan" />
+      </Reveal>
     </div>
   );
 }

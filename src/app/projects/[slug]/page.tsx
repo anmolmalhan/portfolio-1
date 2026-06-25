@@ -4,6 +4,9 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import { ArrowLeft, Code, ExternalLink } from "lucide-react";
+import { Reveal } from "@/components/ui/Reveal";
+import { Magnetic } from "@/components/ui/Magnetic";
+import { SplitReveal } from "@/components/ui/SplitReveal";
 
 export async function generateStaticParams() {
   return projects.map((project) => ({
@@ -80,16 +83,18 @@ export default async function ProjectDetail({ params }: { params: Promise<{ slug
               Private prototypes can omit both and the page stays clean. */}
           <div className="shrink-0 pb-2">
             {project.liveUrl ? (
-              <a
-                href={project.liveUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="group relative flex items-center justify-center gap-3 px-8 py-5 bg-[var(--syntax-blue)] text-white overflow-hidden rounded-full font-mono font-bold tracking-wider uppercase transition-all hover:scale-105 active:scale-95"
-              >
-                <div className="absolute inset-0 bg-white opacity-0 group-hover:opacity-20 transition-opacity" />
-                <ExternalLink className="w-5 h-5 group-hover:rotate-12 transition-transform" />
-                Quick Launch
-              </a>
+              <Magnetic strength={0.3}>
+                <a
+                  href={project.liveUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="group relative flex items-center justify-center gap-3 px-8 py-5 bg-[var(--syntax-blue)] text-white overflow-hidden rounded-full font-mono font-bold tracking-wider uppercase transition-all hover:scale-105 active:scale-95"
+                >
+                  <div className="absolute inset-0 bg-white opacity-0 group-hover:opacity-20 transition-opacity" />
+                  <ExternalLink className="w-5 h-5 group-hover:rotate-12 transition-transform" />
+                  Quick Launch
+                </a>
+              </Magnetic>
             ) : (
               <div className="flex items-center justify-center gap-3 px-8 py-5 border border-foreground/15 text-[var(--syntax-comment)] rounded-full font-mono text-sm uppercase tracking-wider">
                 Prototype · not yet public
@@ -132,51 +137,56 @@ export default async function ProjectDetail({ params }: { params: Promise<{ slug
 
       {/* Case Study Content */}
       <div className="max-w-4xl mx-auto px-6 md:px-12 pb-32">
-        <p className="text-2xl md:text-3xl text-foreground/90 leading-snug font-light mb-12 md:mb-16">
+        <Reveal
+          as="p"
+          className="text-2xl md:text-3xl text-foreground/90 leading-snug font-light mb-12 md:mb-16"
+        >
           {project.summary}
-        </p>
+        </Reveal>
 
         {project.metrics && project.metrics.length > 0 && (
           <dl className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-16 md:mb-20 border-y border-foreground/10 py-8">
-            {project.metrics.map((m) => (
-              <div key={m.label}>
+            {project.metrics.map((m, i) => (
+              <Reveal key={m.label} delay={i * 90}>
                 <dt className="font-mono text-xs uppercase tracking-widest text-[var(--syntax-comment)] mb-2">
                   {m.label}
                 </dt>
                 <dd className="text-xl md:text-2xl font-semibold text-foreground">
                   {m.value}
                 </dd>
-              </div>
+              </Reveal>
             ))}
           </dl>
         )}
 
         <div className="space-y-16 md:space-y-20">
           {project.sections.map((section, i) => (
-            <section key={section.heading}>
+            <Reveal as="section" key={section.heading}>
               <div className="flex items-baseline gap-4 mb-6 md:mb-8">
                 <span className="font-mono text-sm text-[var(--syntax-blue)]">
                   {String(i + 1).padStart(2, "0")}
                 </span>
-                <h2 className="text-3xl md:text-4xl font-bold uppercase tracking-tight">
-                  {section.heading}
-                </h2>
+                <SplitReveal
+                  as="h2"
+                  text={section.heading}
+                  className="text-3xl md:text-4xl font-bold uppercase tracking-tight"
+                />
               </div>
               <div className="space-y-5 text-lg md:text-xl text-[var(--syntax-comment)] leading-relaxed border-l-2 border-surface pl-6 md:pl-8">
                 {section.paragraphs.map((p, j) => (
                   <p key={j}>{p}</p>
                 ))}
               </div>
-            </section>
+            </Reveal>
           ))}
         </div>
 
-        <div className="mt-20 p-8 border border-[var(--syntax-blue)]/20 bg-[var(--syntax-blue)]/5 rounded-xl">
+        <Reveal className="mt-20 p-8 border border-[var(--syntax-blue)]/20 bg-[var(--syntax-blue)]/5 rounded-xl">
           <h3 className="text-xl font-mono text-[var(--syntax-blue)] mb-3">Stack</h3>
           <p className="text-lg text-foreground/80">
             Built with {project.techStack.join(", ")}. Role: {project.role}.
           </p>
-        </div>
+        </Reveal>
       </div>
     </div>
   );

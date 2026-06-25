@@ -64,6 +64,7 @@ export const viewport: Viewport = {
 
 import { Header } from "@/components/ui/Header";
 import CustomCursor from "@/components/animations/CustomCursor";
+import ScrollProgress from "@/components/animations/ScrollProgress";
 import SmoothScroll from "@/components/animations/SmoothScroll";
 import { Analytics } from "@vercel/analytics/next";
 
@@ -100,6 +101,15 @@ export default function RootLayout({
             __html: `(function(){try{var t=localStorage.getItem('theme');if(t==='dark'||t==='light')document.documentElement.setAttribute('data-theme',t);}catch(e){}})();`,
           }}
         />
+        {/* Without JS, IntersectionObserver never runs — keep reveal content visible. */}
+        <noscript>
+          <style
+            dangerouslySetInnerHTML={{
+              __html:
+                ".reveal{opacity:1!important;transform:none!important}.word-reveal{transform:none!important}",
+            }}
+          />
+        </noscript>
       </head>
       <body className="min-h-full flex flex-col selection:bg-foreground selection:text-background">
         <a
@@ -113,6 +123,7 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{ __html: JSON.stringify(personJsonLd) }}
         />
         <SmoothScroll>
+          <ScrollProgress />
           <CustomCursor />
           <Header />
           <main id="main" className="flex-1 flex flex-col w-full relative z-10">{children}</main>

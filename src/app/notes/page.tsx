@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { FileText, ArrowRight } from "lucide-react";
 import { getAllNotes } from "@/lib/notes";
+import { Reveal } from "@/components/ui/Reveal";
+import { SplitReveal } from "@/components/ui/SplitReveal";
 
 export const metadata: Metadata = {
   title: "Notes",
@@ -18,7 +20,7 @@ export default function NotesPage() {
       <div className="mb-12 border-b border-surface pb-6">
         <h1 className="text-4xl font-bold mb-4 flex items-center gap-3">
           <FileText className="text-accent w-8 h-8" />
-          Notes
+          <SplitReveal text="Notes" />
         </h1>
         <p className="text-[var(--syntax-comment)] max-w-2xl text-lg">
           Field notes from building interfaces. Bug post-mortems, pattern essays,
@@ -32,8 +34,8 @@ export default function NotesPage() {
         </p>
       ) : (
         <ul className="space-y-10">
-          {notes.map((note) => (
-            <li key={note.slug} className="group">
+          {notes.map((note, i) => (
+            <Reveal as="li" key={note.slug} className="group" delay={i * 70}>
               <Link
                 href={`/notes/${note.slug}`}
                 className="block focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent rounded-lg p-2 -m-2"
@@ -61,7 +63,7 @@ export default function NotesPage() {
                   Read note <ArrowRight className="w-4 h-4" />
                 </span>
               </Link>
-            </li>
+            </Reveal>
           ))}
         </ul>
       )}
